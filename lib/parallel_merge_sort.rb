@@ -15,9 +15,16 @@ module ParallelMergeSort
   def self.sortItems(items, comparator)
     return items if items.length == 1
 
-    left = sortItems(items.slice(0, items.length / 2), comparator).reverse
-    right = sortItems(items.slice(left.length, items.length), comparator).reverse
-
+    left = []
+    right = []
+    
+    t1 = Thread.new do ||
+      left = sortItems(items.slice(0, items.length / 2), comparator).reverse
+    end
+    right = sortItems(items.slice(items.length / 2, items.length), comparator).reverse
+    
+    t1.join
+    
     items.map! do ||
       a = left.last
       b = right.last
@@ -39,6 +46,9 @@ module ParallelMergeSort
 
 end
 
-arr = [5, 3, 1, 5, 6, 0, 1, 9, 1]
+arr = []
+1000.times do |i|
+  arr << 10000 - i
+end
 ParallelMergeSort.pSort(arr, 1000)
 puts "#{arr}"

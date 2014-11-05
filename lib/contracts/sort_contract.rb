@@ -1,3 +1,4 @@
+gem 'test-unit'
 require 'test/unit/assertions'
 
 module Contracts

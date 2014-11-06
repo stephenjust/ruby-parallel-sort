@@ -61,7 +61,7 @@ module ParallelMergeSort
     
     public
     def merge(items, leftStart, leftEnd, rightStart, rightEnd, comparator)
-      pre_merge(items, leftStart, leftEnd, rightStart, rightEnd)
+      pre_merge(items, leftStart, leftEnd, rightStart, rightEnd, comparator)
 
       result = nil
       left_len = leftEnd - leftStart + 1

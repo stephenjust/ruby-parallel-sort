@@ -20,7 +20,7 @@ module Contracts
       end
     end
 
-    def pre_merge(items, leftStart, leftEnd, rightStart, rightEnd)
+    def pre_merge(items, leftStart, leftEnd, rightStart, rightEnd, comparator)
       assert items.length > rightEnd, "right edge goes off the end of the array"
       assert leftStart <= leftEnd, "the end cannot bypass the start"
       assert rightStart <= rightEnd, "the end cannot bypass the start"
@@ -30,11 +30,11 @@ module Contracts
       assert b_length >= 0, "List B may not be negative length. Got #{b_length}"
       (a_length-1).times do |i|
         index = i + leftStart
-        assert items[index] <= items[index + 1], "Items must be sorted. Got: #{items.slice(leftStart, rightEnd)}"
+        assert comparator.call(items[index], items[index + 1]), "Items must be sorted. Got: #{items.slice(leftStart, rightEnd)}"
       end
       (b_length-1).times do |i|
         index = i + rightStart
-        assert items[index] <= items[index + 1], "Items must be sorted. Got #{items[index]} and #{items[index + 1]}."
+        assert comparator.call(items[index], items[index + 1]) <= 0, "Items must be sorted. Got #{items[index]} and #{items[index + 1]}."
       end
     end
 

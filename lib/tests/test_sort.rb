@@ -9,8 +9,8 @@ class PromptTest < Test::Unit::TestCase
     @sorter = ParallelMergeSort::Sorter.new
     @short_timeout = 0.01
     @long_timeout = 1000000
-    @med_size = 300
-    @large_size = 150
+    @med_size = 3000
+    @large_size = 15000
   end
 
   def test_emptyArray

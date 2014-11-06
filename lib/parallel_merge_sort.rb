@@ -49,6 +49,7 @@ module ParallelMergeSort
 
     public
     def b_find_parition(target, arr, first = 0, last = arr.length - 1)
+      puts "b_search : #{arr.slice(first, last - first)}"
       idx = first
       while first <= last
         idx = (last - first) / 2 + first
@@ -62,7 +63,7 @@ module ParallelMergeSort
     private
     def merge(items, leftStart, leftEnd, rightStart, rightEnd, comparator)
       puts "#{items}"
-      puts "merge : [#{leftStart}, #{leftEnd}], [#{rightStart}, #{rightEnd}] \t #{items.slice(leftStart, leftEnd - leftStart)} : #{items.slice(rightStart, rightEnd - rightStart)}"
+      puts "merge : [#{leftStart}, #{leftEnd}], [#{rightStart}, #{rightEnd}] \t #{items.slice(leftStart, leftEnd - leftStart + 1)} : #{items.slice(rightStart, rightEnd - rightStart + 1)}"
       pre_merge(items, leftStart, leftEnd, rightStart, rightEnd)
 
       result = nil
@@ -91,21 +92,26 @@ module ParallelMergeSort
           arrLeft = merge(items, leftStart, median_left_idx, rightStart, right_partition_idx, comparator) 
         #end
         #t2 = Thread.new do || 
-          arrRight = merge(items, median_left_idx + 1, leftEnd, [right_partition_idx + 1, rightEnd].min, rightEnd, comparator)
+          arrRight = []
+          arrRight = merge(items, median_left_idx + 1, leftEnd, right_partition_idx + 1, rightEnd, comparator) if right_partition_idx + 1 <= rightEnd
         #end
         
         #t1.join
         #t2.join
         
+        puts "left : #{arrLeft}, right : #{arrRight}"
+        puts "merge : [#{leftStart}, #{leftEnd}], [#{rightStart}, #{rightEnd}] \t #{items.slice(leftStart, leftEnd - leftStart + 1)} : #{items.slice(rightStart, rightEnd - rightStart + 1)}"
         #now join the two and return
         arrRight.each do |val|
           arrLeft << val
         end
         
         result = arrLeft
+        
+        puts "partioned at : #{median_left_idx} and #{right_partition_idx} \t #{items}"
       end
       
-      puts "merge result : #{result}"
+      puts "merge result : #{result} over range : [#{leftStart}, #{leftEnd}], [#{rightStart}, #{rightEnd}]"
       post_merge(result, comparator)
       return result
     end

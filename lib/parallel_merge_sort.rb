@@ -17,7 +17,7 @@ module ParallelMergeSort
         sortItems(items, comparator)
       end
 
-      post_sort(original, items)
+      post_sort(original, items, comparator)
     end
 
     private
@@ -69,7 +69,7 @@ module ParallelMergeSort
         tempArr << result
       end
 
-      post_merge(items, leftStart, leftEnd, rightStart, rightEnd)
+      post_merge(items, leftStart, leftEnd, rightStart, rightEnd, comparator)
 
       return tempArr
     end

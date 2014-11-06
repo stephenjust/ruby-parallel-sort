@@ -13,9 +13,9 @@ module ParallelMergeSort
 
       original = items.clone
 
-      Timeout::timeout(duration) do ||
+      #Timeout::timeout(duration) do ||
         sortItems(items, comparator)
-      end
+      #end
 
       post_sort(original, items)
     end
@@ -30,48 +30,84 @@ module ParallelMergeSort
       rightStart = mid + 1
       rightEnd = right
 
-      t1 = Thread.new do ||
+      #t1 = Thread.new do ||
         sortItems(items, comparator, leftStart, leftEnd)
-      end
-      t2 = Thread.new do ||
+      #end
+      #t2 = Thread.new do ||
         sortItems(items, comparator, rightStart, rightEnd)
-      end
+      #end
 
-      t1.join
-      t2.join
+      #t1.join
+      #t2.join
 
+      puts "attempting merge : [#{leftStart}, #{leftEnd}], [#{rightStart}, #{rightEnd}]"
       tempArr = merge(items, leftStart, leftEnd, rightStart, rightEnd, comparator)
       tempArr.each_with_index do |val, index|
         items[left + index] = val
       end
     end
 
+    public
+    def b_find_parition(target, arr, first = 0, last = arr.length - 1)
+      idx = first
+      while first <= last
+        idx = (last - first) / 2 + first
+        return idx if arr[idx] == target
+        last = idx - 1 if arr[idx] > target
+        first = idx + 1 if arr[idx] < target
+      end
+      return idx
+    end
+    
+    private
     def merge(items, leftStart, leftEnd, rightStart, rightEnd, comparator)
+      puts "#{items}"
+      puts "merge : [#{leftStart}, #{leftEnd}], [#{rightStart}, #{rightEnd}] \t #{items.slice(leftStart, leftEnd - leftStart)} : #{items.slice(rightStart, rightEnd - rightStart)}"
       pre_merge(items, leftStart, leftEnd, rightStart, rightEnd)
 
-      tempArr = []
-      right = rightEnd
-      left = leftStart
-
-      (right - left + 1).times do ||
-        a = items[leftStart] if leftEnd >= leftStart
-        b = items[rightStart] if rightEnd >= rightStart
-        result = nil
-        result = a if b == nil
-        result = b if a == nil
-        result = a if result == nil and (comparator.call(b, a) > 0)
-        result ||= b
-        if result == a
-          leftStart += 1
+      result = nil
+      left_len = leftEnd - leftStart + 1
+      right_len = rightEnd - rightStart + 1
+      
+      # ensure first array is always greater than second array
+      if right_len > left_len
+        merge(items, rightStart, rightEnd, leftStart, leftEnd, comparator)
+      elsif left_len == 1
+        if right_len == 1
+          result = [items[leftStart], items[rightStart]] 
+          result.reverse! if result[0] > result[1]
         else
-          rightStart += 1
+          result = [items[leftStart]]
         end
-        tempArr << result
+      else
+        # left array is at least length 1
+        median_left_idx = leftStart + (left_len - 1) / 2
+        right_partition_idx = [b_find_parition(items[median_left_idx], items, leftStart, rightEnd), rightStart].max
+        
+        arrLeft = nil
+        arrRight = nil
+        
+        #t1 = Thread.new do || 
+          arrLeft = merge(items, leftStart, median_left_idx, rightStart, right_partition_idx, comparator) 
+        #end
+        #t2 = Thread.new do || 
+          arrRight = merge(items, median_left_idx + 1, leftEnd, [right_partition_idx + 1, rightEnd].min, rightEnd, comparator)
+        #end
+        
+        #t1.join
+        #t2.join
+        
+        #now join the two and return
+        arrRight.each do |val|
+          arrLeft << val
+        end
+        
+        result = arrLeft
       end
-
-      post_merge(items, leftStart, leftEnd, rightStart, rightEnd)
-
-      return tempArr
+      
+      puts "merge result : #{result}"
+      post_merge(result)
+      return result
     end
   end
 end

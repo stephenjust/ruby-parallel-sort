@@ -4,9 +4,13 @@ require_relative './contracts/sort_contract'
 
 module ParallelMergeSort
   class Sorter
+  
+    attr_accessor :thread_count
+  
     include Contracts::Sort
     def pSort(items, duration, comparator = nil)
       pre_sort(items)
+      @thread_count = 0
       comparator ||= Proc.new do |a, b|
         a <=> b
       end
@@ -31,9 +35,11 @@ module ParallelMergeSort
       rightEnd = right
 
       t1 = Thread.new do ||
+        @thread_count += 1
         sortItems(items, comparator, leftStart, leftEnd)
       end
       t2 = Thread.new do ||
+        @thread_count += 1
         sortItems(items, comparator, rightStart, rightEnd)
       end
 
@@ -85,7 +91,8 @@ module ParallelMergeSort
         arrLeft = nil
         arrRight = []
         
-        t1 = Thread.new do || 
+        t1 = Thread.new do ||
+          @thread_count += 1
           if rightStart <= right_partition_idx
             arrLeft = merge(items, leftStart, median_left_idx, rightStart, right_partition_idx, comparator)
           else
@@ -93,6 +100,7 @@ module ParallelMergeSort
           end
         end
         t2 = Thread.new do ||
+          @thread_count += 1
           if right_partition_idx + 1 <= rightEnd
             arrRight = merge(items, median_left_idx + 1, leftEnd, right_partition_idx + 1, rightEnd, comparator)
           else

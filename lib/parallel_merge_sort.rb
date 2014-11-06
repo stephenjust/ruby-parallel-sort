@@ -47,15 +47,15 @@ module ParallelMergeSort
     end
 
     public
-    def b_find_parition(target, arr, first = 0, last = arr.length - 1)
+    def b_find_parition(target, arr, first = 0, last = arr.length - 1, comparator)
       idx = first
       while first <= last
         idx = (last - first) / 2 + first
-        return idx if arr[idx] == target
-        last = idx - 1 if arr[idx] > target
-        first = idx + 1 if arr[idx] < target
+        return idx if comparator.call(arr[idx], target) == 0
+        last = idx - 1 if comparator.call(arr[idx], target) > 0
+        first = idx + 1 if comparator.call(arr[idx], target) < 0
       end
-      return idx - 1 if target < arr[idx]
+      return idx - 1 if comparator.call(target, arr[idx]) < 0
       return idx
     end
     
@@ -73,14 +73,14 @@ module ParallelMergeSort
       elsif left_len == 1
         if right_len == 1
           result = [items[leftStart], items[rightStart]] 
-          result.reverse! if result[0] > result[1]
+          result.reverse! if comparator.call(result[0], result[1]) > 0
         else
           result = [items[leftStart]]
         end
       else
         # left array is at least length 1
         median_left_idx = leftStart + (left_len - 1) / 2
-        right_partition_idx = b_find_parition(items[median_left_idx], items, rightStart, rightEnd)
+        right_partition_idx = b_find_parition(items[median_left_idx], items, rightStart, rightEnd, comparator)
         
         arrLeft = nil
         arrRight = []

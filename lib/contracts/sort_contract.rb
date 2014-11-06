@@ -38,8 +38,8 @@ module Contracts
       end
     end
 
-    def post_merge(items)
-      (items.length-1).times do |i|
+    def post_merge(items, comparator)
+      (items.length-1).times do |index|
         assert comparator.call(items[index], items[index + 1]) <= 0, "Items must be sorted. Got: #{items}"
       end
     end

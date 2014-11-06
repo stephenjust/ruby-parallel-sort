@@ -106,7 +106,7 @@ module ParallelMergeSort
       end
       
       puts "merge result : #{result}"
-      post_merge(result)
+      post_merge(result, comparator)
       return result
     end
   end

@@ -13,13 +13,10 @@ module Contracts
       end
     end
 
-    def post_sort(items, ret)
+    def post_sort(items, ret, comparator)
       assert_equal items.length, ret.length, "Sorted list must be the same length as the original."
       (items.length-1).times do |i|
-        assert ret[i] <= ret[i+1], "Items must be sorted. Got #{ret[i]} and #{ret[i+1]}."
-      end
-      items.sort.each_with_index do |val, index|
-        assert_equal val, ret[index], "Sort does not match default sort! Expected : a[#{index}] = #{val}. Rxd : a[#{index} = #{ret[index]}"
+        assert comparator.call(ret[i], ret[i+1]) <= 0, "Items must be sorted. Got #{ret[i]} and #{ret[i+1]}."
       end
     end
 
@@ -43,7 +40,7 @@ module Contracts
 
     def post_merge(items)
       (items.length-1).times do |i|
-        assert items[i] <= items[i + 1], "Items must be sorted. Got: #{items}"
+        assert comparator.call(items[index], items[index + 1]) <= 0, "Items must be sorted. Got: #{items}"
       end
     end
   end

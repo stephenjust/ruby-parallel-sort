@@ -17,7 +17,7 @@ module ParallelMergeSort
         sortItems(items, comparator)
       #end
 
-      post_sort(original, items)
+      post_sort(original, items, comparator)
     end
 
     private

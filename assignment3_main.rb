@@ -23,3 +23,9 @@ puts "after sort: #{arr}"
 rev_strsort = Proc.new { |a, b| b <=> a }
 sorter.pSort(arr, 1000, rev_strsort)
 puts "after custom sort: #{arr}"
+
+# Sort some large number of values
+10000.times {|i| arr[i] = Random.rand}
+start = Time.now
+sorter.pSort(arr, 1000)
+puts "Sort of 10000 elements took #{Time.now - start} seconds"

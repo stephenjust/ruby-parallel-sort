@@ -39,7 +39,7 @@ module Contracts
       len = rightEnd - leftStart
       (len-1).times do |i|
         index = leftStart + i
-        assert comparator.run(items[index], items[index + 1]) <= 0, "Items must be sorted. Got #{items[index]} and #{items[index + 1]}."
+        assert comparator.call(items[index], items[index + 1]) <= 0, "Items must be sorted. Got #{items[index]} and #{items[index + 1]}."
       end
     end
   end

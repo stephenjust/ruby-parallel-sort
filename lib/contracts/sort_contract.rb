@@ -3,6 +3,7 @@ require 'test/unit/assertions'
 
 module Contracts
   module Sort
+    include Test::Unit::Assertions
 
     def pre_sort(items)
       assert items.respond_to?(:length), "Items must have a length."
@@ -17,25 +18,32 @@ module Contracts
       (items.length-1).times do |i|
         assert ret[i] <= ret[i+1], "Items must be sorted. Got #{ret[i]} and #{ret[i+1]}."
       end
-    end
-
-    def pre_merge(a, b)
-      assert a.length > 0, "List A may not be empty."
-      assert b.length > 0, "List B may not be empty."
-      (a.length-1).times do |i|
-        assert a[i] <= a[i+1], "Items must be sorted. Got #{a[i]} and #{a[i+1]}."
-      end
-      (b.length-1).times do |i|
-        assert b[i] <= b[i+1], "Items must be sorted. Got #{b[i]} and #{b[i+1]}."
-      end      
-    end
-
-    def post_merge(a, b, ret)
-      assert_equal a.length+b.length, ret.length, "Length of merged lists must be sum of list lengths."
-      (ret.length-1).times do |i|
-        assert ret[i] <= ret[i+1], "Items must be sorted. Got #{ret[i]} and #{ret[i+1]}."
+      items.sort.each_with_index do |val, index|
+        assert_equal val, ret[index], "Sort does not match default sort! Expected : a[#{index}] = #{val}. Rxd : a[#{index} = #{ret[index]}"
       end
     end
-    
+
+    def pre_merge(items, leftStart, leftEnd, rightStart, rightEnd)
+      a_length = (leftEnd - leftStart)
+      b_length = (rightEnd - rightStart)
+      assert a_length >= 0, "List A may not be negative length."
+      assert b_length >= 0, "List B may not be negative length."
+      (a_length-1).times do |i|
+        index = i + leftStart
+        assert items[index] <= items[index + 1], "Items must be sorted. Got #{items[index]} and #{items[index + 1]}."
+      end
+      (b_length-1).times do |i|
+        index = i + rightStart
+        assert items[index] <= items[index + 1], "Items must be sorted. Got #{items[index]} and #{items[index + 1]}."
+      end
+    end
+
+    def post_merge(items, leftStart, leftEnd, rightStart, rightEnd)
+      len = rightEnd - leftStart
+      (len-1).times do |i|
+        index = leftStart + i
+        assert items[index] <= items[index + 1], "Items must be sorted. Got #{items[index]} and #{items[index + 1]}."
+      end
+    end
   end
 end

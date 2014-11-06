@@ -13,6 +13,20 @@ class PromptTest < Test::Unit::TestCase
     @large_size = 150
   end
   
+  def test_merge
+    res = @sorter.merge([1, 4, 5], 0, 1, 2, 2, Proc.new do |a, b| a <=> b end)
+    assert_equal [1, 4, 5], res
+    puts "\n\n"
+    res = @sorter.merge([1, 4, 4, 5], 0, 1, 2, 3, Proc.new do |a, b| a <=> b end)
+    assert_equal [1, 4, 4, 5], res
+    puts "\n\n"
+    res = @sorter.merge([7, 8, 9, 5], 0, 2, 3, 3, Proc.new do |a, b| a <=> b end)
+    assert_equal [5, 7, 8, 9], res
+    puts "\n\n"
+    res = @sorter.merge([1, 4, 5, 7, 8, 9], 0, 2, 3, 5, Proc.new do |a, b| a <=> b end)
+    assert_equal [1, 4, 5, 7, 8, 9], res
+  end
+  
   #def test_find
   #  res = @sorter.b_find_parition(2, [0,2, 4, 6, 9, 100, 105])
   #  assert_equal 1, res
@@ -36,15 +50,15 @@ class PromptTest < Test::Unit::TestCase
     @sorter.pSort(arr, @long_timeout)
   end
 
-  #def test_largeArray
-  #  arr = []
-  #  @large_size.times do |i|
-  #    arr << i + 1 if i % 2 == 0
-  #    arr << @large_size - i if i % 2 == 1
-  #  end
-  #  @sorter.pSort(arr, @long_timeout)
-  #end
-  #
+  def test_largeArray
+    arr = []
+    @large_size.times do |i|
+      arr << i + 1 if i % 2 == 0
+      arr << @large_size - i if i % 2 == 1
+    end
+    @sorter.pSort(arr, @long_timeout)
+  end
+  
   #def test_reverseArray
   #  arr = []
   #  @med_size.times do |i|

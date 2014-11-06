@@ -21,13 +21,16 @@ module Contracts
     end
 
     def pre_merge(items, leftStart, leftEnd, rightStart, rightEnd)
-      a_length = (leftEnd - leftStart)
-      b_length = (rightEnd - rightStart)
-      assert a_length >= 0, "List A may not be negative length."
-      assert b_length >= 0, "List B may not be negative length."
+      assert items.length > rightEnd, "right edge goes off the end of the array"
+      assert leftStart <= leftEnd, "the end cannot bypass the start"
+      assert rightStart <= rightEnd, "the end cannot bypass the start"
+      a_length = (leftEnd - leftStart) + 1
+      b_length = (rightEnd - rightStart) + 1
+      assert a_length >= 0, "List A may not be negative length. Got #{a_length}"
+      assert b_length >= 0, "List B may not be negative length. Got #{b_length}"
       (a_length-1).times do |i|
         index = i + leftStart
-        assert items[index] <= items[index + 1], "Items must be sorted. Got #{items[index]} and #{items[index + 1]}."
+        assert items[index] <= items[index + 1], "Items must be sorted. Got: #{items.slice(leftStart, rightEnd)}"
       end
       (b_length-1).times do |i|
         index = i + rightStart
@@ -35,11 +38,9 @@ module Contracts
       end
     end
 
-    def post_merge(items, leftStart, leftEnd, rightStart, rightEnd, comparator)
-      len = rightEnd - leftStart
-      (len-1).times do |i|
-        index = leftStart + i
-        assert comparator.call(items[index], items[index + 1]) <= 0, "Items must be sorted. Got #{items[index]} and #{items[index + 1]}."
+    def post_merge(items, comparator)
+      (items.length-1).times do |index|
+        assert comparator.call(items[index], items[index + 1]) <= 0, "Items must be sorted. Got: #{items}"
       end
     end
   end
